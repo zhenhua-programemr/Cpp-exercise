@@ -1,28 +1,3 @@
-class Student//学生类
-{
-public:
-	~Student();//析构函数
-    void InputStudent(void);//输入学生信息
-    void OutputStudent(void);//输出学生信息
-    void DeleteStudent(void);//删除学生信息
-    void SearchStudent(void);//查找学生信息
-    void ChangeStudent(void);//修改学生信息
-    void ScortByChinese(void);//对学生的语文成绩排序
-    void ScortByMath(void);  //对学生的数学成绩排序
-    void ScortByEnglish(void);//对学生的英语成绩排序
-    void ScortByTotal(void);//对学生的总分排序
- 
-private:
-    Student *St;     //学生类指针
-    int Size;       //学生的人数    
-    string Name;    //姓名
-    int Age;        //年龄
-    int No;         //学号
-    float Score[3];//三科的成绩
-    float Total;  //总分
-    float Ave;   //平均分
-};
-
 #include <iostream>
 #include <cstdlib>
 #include <string>
