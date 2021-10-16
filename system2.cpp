@@ -1,366 +1,463 @@
-#include <iostream>
-#include <cstdlib>
-#include <string>
+#include<iostream>
  
 using namespace std;
  
-class Student//学生类
+struct Stu
 {
-public:
-	~Student();//析构函数
-    void InputStudent(void);//输入学生信息
-    void OutputStudent(void);//输出学生信息
-    void DeleteStudent(void);//删除学生信息
-    void SearchStudent(void);//查找学生信息
-    void ChangeStudent(void);//修改学生信息
-    void ScortByChinese(void);//对学生的语文成绩排序
-    void ScortByMath(void);  //对学生的数学成绩排序
-    void ScortByEnglish(void);//对学生的英语成绩排序
-    void ScortByTotal(void);//对学生的总分排序
- 
-private:
-    Student *St;     //学生类指针
-    int Size;       //学生的人数    
-    string Name;    //姓名
-    int Age;        //年龄
-    int No;         //学号
-    float Score[3];//三科的成绩
-    float Total;  //总分
-    float Ave;   //平均分
+  char no[10];
+  char name[16];
+  int math;
+  int chi;
+  double ave;
 };
  
-//析构函数
-Student::~Student()
+class Student
 {
-	delete(St);
-}
+public:
+  Stu st;
+  Student * next;
+public:
+  Student(){}
+  Student(Stu s)
+  {
+    st=s;
+    next=NULL;
+    st.ave=(st.math+st.chi)/2.0;
+  }
+  void setst(Stu s)
+  {
+    st=s;
+    st.ave=(st.math+st.chi)/2.0;
+  }
+  Stu getst()
+  {
+    return st;
+  }
+  void show()
+  {
+    cout<<"----------------------------"<<endl;
+    cout<<"学号:"<<st.no<<endl;
+    cout<<"姓名:"<<st.name<<endl;
+    cout<<"数学成绩:"<<st.math<<endl;
+    cout<<"语文成绩:"<<st.chi<<endl;
+    cout<<"平均成绩:"<<st.ave<<endl;
+    cout<<"----------------------------"<<endl;
+  }
+};
+#include<fstream>
+#include"Student.cpp"
  
-//输入学生的信息
-void Student::InputStudent(void)
-{
-    int len;//学生的人数
-    cout<<"请输入学生的人数:";
-    cin>>len;
+using namespace std;
  
-    system("cls");
+Student * create_List();
+void traverse_List(Student * pHead);
+bool is_empty(Student * pHead);
+int length_List(Student * pHead);
+bool insert_List(Student * pHead,int position,Stu st);
+bool delete_List(Student * pHead,int position,Stu * st);
+void sort_List(Student * pHead); 
+void menu_select();
+void handle_menu(int s);
+void outFile();
+Student * inFile();
+void delFile();
  
-    Size = len;
+Student * pHead;
  
-    St = new Student[Size];
- 
-    for(int i=0; i<len; i++)
-    {
-        cout<<"请输入第"<<i+1<<"个学生的姓名:";
-        cin>>St[i].Name;
- 
-        cout<<"请输入第"<<i+1<<"个学生的年龄:";
-        cin>>St[i].Age;
- 
-        cout<<"请输入第"<<i+1<<"个学生的学号:";
-        cin>>St[i].No;
- 
-        cout<<"请输入第"<<i+1<<"个学生的语文成绩:";
-        cin>>St[i].Score[0];
- 
-        cout<<"请输入第"<<i+1<<"个学生的数学成绩:";
-        cin>>St[i].Score[1];
- 
-        cout<<"请输入第"<<i+1<<"个学生的英语成绩:";
-        cin>>St[i].Score[2];
- 
-        St[i].Total = St[i].Score[0] + St[i].Score[1] + St[i].Score[2];
- 
-        St[i].Ave = St[i].Total / 3.0f;
- 
-        system("cls");
-    }
-}
- 
-//输出学生的信息
-void Student::OutputStudent(void)
-{
-    cout<<"姓名  年龄   学号   语文   数学  英语  总分  平均分"<<endl;
- 
-    for(int i=0; i<Size; i++)
-    {
-        cout<<St[i].Name<<"  "<<St[i].Age<<"  "<<St[i].No<<"  "<<St[i].Score[0]<<"  "<<St[i].Score[1]<<"  "<<St[i].Score[2]<<"  "
-               <<St[i].Score[2]<<"  "<<St[i].Total<<"  "<<St[i].Ave<<endl;
-    }
-}
- 
-void Student::DeleteStudent(void)//删除学生信息
-{
-    string str;
-    cout<<"请输入你需要删除的学生的姓名:";
-    cin>>str;
- 
-    int num;//标记姓名相等时的下标
- 
-    //寻找姓名相等时的下标
-    for(int i=0; i<Size; i++)
-    {
-        //当姓名相等时
-        if(str == St[i].Name)
-        {
-            num = i;
-        }
-    }
- 
-    //将后面的学生向前移
-    for(int j=num+1; j<Size; j++)
-    {
-        St[j-1] = St[j];
-    }
- 
-    Size -= 1;//学生人数减少一个 
-}
- 
-void Student::SearchStudent(void)//查找学生信息
-{
-    string name;
-    cout<<"请输入你需要查找的学生的姓名:";
-    cin>>name;
- 
-    int i;
- 
-    for(i=0; i<Size; i++)
-    {
-        if(name == St[i].Name)
-        {
-            break;
-        }
-    }
- 
-    cout<<St[i].Name<<" "<<St[i].Age<<" "<<St[i].No<<" "<<St[i].Score[0]<<" "<<St[i].Score[1]<<" "
-           <<St[i].Score[2]<<" "<<St[i].Total<<" "<<St[i].Ave<<endl;
-}
- 
-void Student::ChangeStudent(void)//修改学生信息
-{
-     string name;
-    cout<<"请输入你需要修改的学生的姓名:";
-    cin>>name;
- 
-    int i;
- 
-    for(i=0; i<Size; i++)
-    {
-        if(name == St[i].Name)
-        {
-            break;
-        }
-    }
-    
-    cout<<"修改前学生的信息:"<<endl;
-      cout<<St[i].Name<<" "<<St[i].Age<<" "<<St[i].No<<"  "<<St[i].Score[0]<<" "<<St[i].Score[1]<<" "
-           <<St[i].Score[2]<<" "<<St[i].Total<<" "<<St[i].Ave<<endl<<endl;
- 
-    cout<<"请输入学生的姓名:";
-    cin>>St[i].Name;
- 
-    cout<<"请输入学生的年龄:";
-    cin>>St[i].Age;
- 
-    cout<<"请输入第个学生的学号:";
-    cin>>St[i].No;
- 
-    cout<<"请输入学生的语文成绩:";
-    cin>>St[i].Score[0];
- 
-    cout<<"请输入学生的数学成绩:";
-    cin>>St[i].Score[1];
- 
-    cout<<"请输入第学生的英语成绩:";
-    cin>>St[i].Score[2];
- 
-    St[i].Total = St[i].Score[0] + St[i].Score[1] + St[i].Score[2];
- 
-    St[i].Ave = St[i].Total / 3.0f;
-}
- 
-void Student::ScortByChinese(void)//对学生的语文成绩排序
-{
-    //提供插入数组中的数据
-    for(int i=1; i<Size; i++)
-    {
-        int j = i-1;
- 
-        //插入数组中的数据
-        Student temp = St[i];
- 
-        while(temp.Score[0] > St[j].Score[0] && j>=0)
-        {
-            St[j+1]  = St[j];
-			
-			j--;
-        }
- 
-        St[++j] = temp;
-    }
-}
- 
-void Student::ScortByMath(void)//对学生的数学成绩排序
-{
-	//提供插入数组中的数据
-    for(int i=1; i<Size; i++)
-    {
-        int j = i-1;
- 
-        //插入数组中的数据
-        Student temp = St[i];
- 
-        while(temp.Score[1] > St[j].Score[1] && j>=0)
-        {
-            St[j+1]  = St[j];
-			
-			j--;
-        }
- 
-        St[++j] = temp;
-    }
-}
- 
-void Student::ScortByEnglish(void)//对学生的英语成绩排序
-{
-	//提供插入数组中的数据
-    for(int i=1; i<Size; i++)
-    {
-        int j = i-1;
- 
-        //插入数组中的数据
-        Student temp = St[i];
- 
-        while(temp.Score[2] > St[j].Score[2] && j>=0)
-        {
-            St[j+1]  = St[j];
-			
-			j--;
-        }
- 
-        St[++j] = temp;
-    }
-}
- 
-void Student::ScortByTotal(void)//对学生的总分排序
-{
-	//提供插入数组中的数据
-    for(int i=1; i<Size; i++)
-    {
-        int j = i-1;
- 
-        //插入数组中的数据
-        Student temp = St[i];
- 
-        while(temp.Total  > St[j].Total && j>=0)
-        {
-            St[j+1]  = St[j];
-	
-			j--;
-        }
- 
-        St[++j] = temp;
-    }
-}
  
 void main()
 {
-    cout<<"================================================================================\n"<<endl;  
-    cout<<"================================================================================\n"<<endl;  
-    cout<<"*************************欢迎使用学生成绩管理系统*******************************\n"<<endl;  
-    cout<<"-----------------------------------------------------------------制作人:梅沙小子\n"<<endl;  
-    cout<<"********************************************************************************\n"<<endl;  
-    cout<<"================================================================================\n"<<endl;  
-    
-    cout<<"请按任意将进入学生管理系统:"<<endl;  
-    getchar();  
-    system("cls");  
-  
-    cout<<"================================================================================\n\n";  
-    cout<<"------------------------ 请选择要操作的命令：-----------------------------------\n\n";  
-    cout<<"-------------------------- 1 输入学生信息--------------------------------------\n\n";  
-    cout<<"-------------------------- 2 输出学生信息--------------------------------------\n\n";  
-    cout<<"-------------------------- 3 删除学生信息--------------------------------------\n\n";  
-    cout<<"-------------------------- 4 查找学生信息--------------------------------------\n\n";  
-    cout<<"-------------------------- 5 修改学生信息--------------------------------------\n\n";  
-    cout<<"-------------------------- 6 将学生的语文成绩按从大到小排----------------------\n\n";  
-    cout<<"-------------------------- 7 将学生的数学成绩按从大到小排----------------------\n\n";  
-    cout<<"-------------------------- 8 将学生的英语成绩按从大到小排----------------------\n\n";  
-    cout<<"-------------------------- 9 将学生的总成绩按从大到小排------------------------\n\n";  
-    cout<<"================================================================================\n\n";  
-    
-    int Item;//操作命令
+  menu_select();
+}
  
-    Student st;//学生对象
+void menu_select()
+{
+  int s;
+  cout<<"请输入您要操作的选项:"<<endl;
+  cout<<"1.增加原始记录"<<endl;
+  cout<<"2.按平均分排序显示所有记录"<<endl;
+  cout<<"3.保存原始文件"<<endl;
+  cout<<"4.读取原始文件"<<endl;
+  cout<<"5.删除原始文件"<<endl;
+  cout<<"6.插入单条记录"<<endl;
+  cout<<"7.删除单条记录"<<endl;
+  cout<<"8.显示记录总条数"<<endl;
+  cout<<"9.结束程序运行"<<endl<<endl;
+  cout<<"左边数字对应功能选择,请选择1-9:";
+  cin>>s;
+  handle_menu(s);
+}
  
-    while(1)  
-   {  
-        cout<<"请选择操作命令:";  
-        cin>>Item;  
-        system("cls");//清屏  
-  
-       switch(Item)  
-        {  
-            case 1://输入学生信息  
-            {  
-                st.InputStudent();  
-            }  
-            break;  
-  
-            case 2://输出学生信息  
-            {  
-                st.OutputStudent();  
-            }  
-            break;  
-  
-          case 3://删除学生信息  
-            {  
-                st.DeleteStudent();  
-           }  
-            break;  
-  
-            case 4://查找学生信息  
-            {  
-                st.SearchStudent();  
-            }  
-            break;  
-  
-            case 5://修改学生信息  
-            {  
-               st.ChangeStudent();   
-            }              
-            break;  
+void handle_menu(int s)
+{
+  switch (s)
+  {
+  case 1:
+    {
+      system("cls");
+      pHead=create_List();
+      system("cls");
+      menu_select();
+      break;
+    }
+  case 2:
+    {
+      if(NULL==pHead)
+      {
+        cout<<"记录总条数为零"<<endl;
+        getchar();
+        getchar();
+        system("cls");
+        menu_select();
+      }
+      system("cls");
+      sort_List(pHead);
+      traverse_List(pHead);
+      getchar();
+      getchar();
+      system("cls");
+      menu_select();
+      break;
+    }
+  case 3:
+    {
+      if(pHead!=NULL)
+      {
+        system("cls");
+        outFile();
+        system("cls");
+        menu_select();
+      }
+      system("cls");
+      menu_select();
+      break;
+    }
+  case 4:
+    {
+      system("cls");
+      pHead=inFile();
+      system("cls");
+      menu_select();
+      break;
+    }
+  case 5:
+    {
+      system("cls");
+      delFile();
+      system("cls");
+      menu_select();
+      break;
+    }
+  case 6:
+    {
+      if(NULL==pHead)
+      {
+        cout<<"记录总条数为零"<<endl;
+        getchar();
+        getchar();
+        system("cls");
+        menu_select();
+      }
+      system("cls");
+      int num;
+      Stu st;
+      traverse_List(pHead);
+      cout<<"您想在哪条记录后插入,请输入序号:";
+      cin>>num;
+      cout<<"编辑要插入的记录:"<<endl;
+      cout<<"学号:";
+      cin>>st.no;
+      cout<<"姓名:";
+      cin>>st.name;
+      cout<<"数学成绩:";
+      cin>>st.math;
+      cout<<"语文成绩:";
+      cin>>st.chi;
+      if(insert_List(pHead,num-1,st))
+      {
+        cout<<"插入成功!"<<endl;
+      }
+      else
+      {
+        cout<<"插入失败!"<<endl;
+      }
+      getchar();
+      getchar();
+      system("cls");
+      menu_select();
+      break;
+    }
+  case 7:
+    {
+      if(NULL==pHead)
+      {
+        cout<<"记录总条数为零"<<endl;
+        getchar();
+        getchar();
+        system("cls");
+        menu_select();
+      }
+      int num;
+      Stu * st=(Stu *)malloc(sizeof(Stu));
+      traverse_List(pHead);
+      cout<<endl<<"请输入您要删除的记录的序号:";
+      cin>>num;
+      if(delete_List(pHead,num,st))
+      {
+        cout<<endl<<"成功删除的记录如下:"<<endl;
+        cout<<"学号:"<<st->no<<endl<<"姓名:"<<st->name<<endl;
+      }
+      else
+      {
+        cout<<"删除失败!"<<endl;
+      }
+      getchar();
+      getchar();
+      system("cls");
+      menu_select();
+      break;
+    }
+  case 8:
+    {
+      if(NULL!=pHead)
+      {
+        system("cls");
+        cout<<"记录总条数:"<<length_List(pHead)<<"条"<<endl;
+        getchar();
+        getchar();
+        system("cls");
+        menu_select();
+      }
+      else
+      {
+        cout<<"记录总条数为零"<<endl;
+        getchar();
+        getchar();
+        system("cls");
+        menu_select();
+      }
+      break;
+    }
+  case 9:
+    {
+      system("cls");
+      cout<<"成功退出!"<<endl;
+      exit(0);
+      break;
+    }
+  }
+}
  
-            case 6://对学生的语文成绩排序  
-            {  
-                st.ScortByChinese();  
-               st.OutputStudent();  
-            }  
-            break;  
-  
-            case 7://对学生的数学成绩排序  
-            {  
-                st.ScortByMath();  
-                st.OutputStudent();  
-            }  
-            break;  
-  
-            case 8://对学生的英语成绩排序  
-            {  
-                st.ScortByEnglish();  
-                st.OutputStudent();  
-            }  
-            break;  
-  
-            case 9://对学生的总分排序  
-            {  
-                st.ScortByTotal();  
-                st.OutputStudent();
-            }  
-            break;  
-            default:  
-            break;  
-        }  
-    }  
-  
-    system("pause");  
+ 
+void delFile()
+{
+  ofstream fileout;
+  fileout.open("c:\\kcsj.txt",ios_base::out);
+  fileout<<"";
+  fileout.close();
+}
+ 
+ 
+Student * inFile()
+{
+  Student * pHead=(Student *)malloc(sizeof(Student));
+  if(NULL==pHead)
+  {
+    cout<<"分配失败,程序终止!"<<endl;
+    exit(0);
+  }
+  Student * pTail=pHead;
+  pTail->next=NULL;
+  ifstream in("c:\\kcsj.txt");
+  if (!in.is_open())
+  {
+    cout << "Error opening file"<<endl; 
+    exit(0);
+  }
+  while (!in.eof())
+  {
+    Stu st;
+    in.read(reinterpret_cast<char *>(&st), sizeof(st));
+    if (in.fail()) 
+    {
+      break;
+    }
+    Student * pNew=new Student();
+    if(NULL==pNew)
+    {
+      printf("分配失败,程序终止\n");
+      exit(0);
+    }
+    pNew->setst(st);
+    pTail->next=pNew;
+    pNew->next=NULL;
+    pTail=pNew;
+  }
+  in.close();
+  return pHead;
+}
+ 
+ 
+void outFile()
+{
+  ofstream out;
+  out.open("c:\\kcsj.txt",ios_base::out|ios_base::app|ios::binary);
+  if(!out)
+  {
+    cout<<"文件不存在，退出时别忘记保存文件!"<<endl;
+    out.close();
+    out.open("stu.dat",ios_base::out|ios::binary);
+  }
+  else
+  { 
+    out.close();
+    out.open("c:\\kcsj.txt",ios_base::out|ios_base::app|ios::binary);
+  }
+  Student * temp=pHead->next;
+  while(temp!=NULL)
+  {
+    Stu st=temp->getst();
+    out.write(reinterpret_cast<char *>(&st), sizeof(st));
+    temp=temp->next;
+  }  
+  out.close();
+}
+ 
+Student * create_List()
+{
+  int len;
+  Student * pHead=(Student *)malloc(sizeof(Student));
+  if(NULL==pHead)
+  {
+    cout<<"分配失败,程序终止!"<<endl;
+    exit(0);
+  }
+  Student * pTail=pHead;
+  pTail->next=NULL;
+  cout<<"请输入要存储的学生人数:";
+  cin>>len;
+  for(int i=0;i<len;i++)
+  {
+    Stu st;
+    cout<<"请输入第"<<i+1<<"个学生的学号:";
+    cin>>st.no;
+    cout<<"请输入第"<<i+1<<"个学生的姓名:";
+    cin>>st.name;
+    cout<<"请输入第"<<i+1<<"个学生的数学成绩:";
+    cin>>st.math;
+    cout<<"请输入第"<<i+1<<"个学生的语文成绩:";
+    cin>>st.chi;
+    Student * pNew=new Student();
+    if(NULL==pNew)
+    {
+      printf("分配失败,程序终止\n");
+      exit(0);
+    }
+    pNew->setst(st);
+    pTail->next=pNew;
+    pNew->next=NULL;
+    pTail=pNew;
+  }
+  return pHead;
+}
+ 
+void traverse_List(Student * pHead)
+{
+  int i=1;
+  Student * temp=pHead->next;
+  while(temp!=NULL)
+  {
+    cout<<endl<<"序号:"<<i<<endl;
+    temp->show();
+    temp=temp->next;
+    i++;
+  }
+}  
+ 
+bool is_empty(Student * pHead)
+{
+  if(NULL==pHead->next)
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+ 
+int length_List(Student * pHead)
+{
+  int len=0;
+  Student * temp=pHead->next;
+  while(temp)
+  {
+    len++;
+    temp=temp->next;
+  }
+  return len;
+}
+ 
+bool insert_List(Student * pHead,int position,Stu st)
+{
+  int i=0;
+  Student * p=pHead;
+ 
+  while(NULL!=p&&i<position-1)
+  {
+    p=p->next;
+    i++;
+  }
+  if(i>position-i||NULL==p)
+  {
+    return false;
+  }
+  Student * pNew=(Student *)malloc(sizeof(Student));
+  if(NULL==pNew)
+  {
+    cout<<"分配失败,程序终止"<<endl;
+    exit(0);
+  }
+  pNew->setst(st);
+  pNew->next=p->next;
+  p->next=pNew;
+  return true;
+}
+ 
+bool delete_List(Student * pHead,int position,Stu * st)
+{
+  int i=0;
+  Student * p=pHead;
+ 
+  while(NULL!=p->next&&i<position-1)
+  {
+    p=p->next;
+    i++;
+  }
+  Student * q=p->next;
+  *st=q->getst();
+  p->next=p->next->next;
+  free(q);
+  q=NULL;
+  return true;
+}
+ 
+void sort_List(Student * pHead)
+{
+  Student * p,* q;
+  Stu temp;
+  int i,j;
+  int len=length_List(pHead);
+  for(i=0,p=pHead->next;i<len-1;i++,p=p->next)
+  {
+    for(j=i+1,q=p->next;j<len;j++,q=q->next)
+    {
+      if(q->st.ave>p->st.ave)
+      {
+        temp=q->st;
+        q->st=p->st;
+        p->st=temp;
+      }
+    }
+  }  
 }
